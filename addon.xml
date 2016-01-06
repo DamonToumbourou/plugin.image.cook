@@ -1,5 +1,5 @@
 <?xml version="1.0.0" encoding="UTF-8" standalone="yes"?>
-<addon id="script.cook" name="Cook with Kodi" version="1.0.0" provider-name="Damon Toumbourou">
+<addon id="plugin.image.cook" name="Cook with Kodi" version="1.0.0" provider-name="Damon Toumbourou">
   <requires>
     <import addon="xbmc.python"                     version="2.20.0"/>
     <import addon="script.module.xbmcswift2"        version="2.4.0"/>
@@ -7,7 +7,7 @@
     <import addon="script.module.requests"          version="2.5.3"/>
   </requires>
   <extension point="xbmc.python.pluginsource" library="addon.py">
-    <provides>executable</provides>
+    <provides>image</provides>
   </extension>
   <extension point="xbmc.addon.metadata">
     <platform>all</platform>
