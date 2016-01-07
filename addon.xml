@@ -5,6 +5,7 @@
     <import addon="script.module.xbmcswift2"        version="2.4.0"/>
     <import addon="script.module.beautifulsoup4"    version="4.3.1"/>
     <import addon="script.module.requests"          version="2.5.3"/>
+    <import addon="script.module.pyxbmct"           version="1.1.4"/>
   </requires>
   <extension point="xbmc.python.pluginsource" library="addon.py">
     <provides>image</provides>

@@ -1,15 +1,9 @@
-from bs4 import BeautifulSoup as bs 
+from bs4 import BeautifulSoup as bs
+import urllib2
 import requests 
 import re
 
-
-def get_soup(url):
-    page = requests.get(url)
-    soup = bs(page.text, 'html.parser')
-
-    return soup
-
-
+"""
 def get_category(url):
     soup = get_soup(url)
     content = soup.find_all('div', {'class': 'popular-collection clearfix'})
@@ -18,18 +12,49 @@ def get_category(url):
     for i in content:
         print i
 #get_category('http://www.taste.com.au/')
+"""
 
-
-def get_search(keyword):
-    SEARCH_URL = 'http://www.taste.com.au/search-recipes/?q=' + keyword  + '&x=0&y=0'
-    soup = get_soup(SEARCH_URL)
+def get_search(page_num, keyword):
+    keyword = keyword.replace(' ', '+')
+    SEARCH_URL = 'http://www.taste.com.au/search-recipes/?q=' + keyword + '&page=' + str(page_num) 
+    
+    html = urllib2.urlopen(SEARCH_URL).read()
+    html = html.replace("</scr' + 'ipt>","")
+    soup = bs(html, 'html.parser')
     content = soup.find('div', {'class': 'content-item'})
-    content = soup.find_all('h3')
-
+    content = soup.find_all('div', {'class': 'story-block '})
+    
+    output = []
     for i in content:
-        if i.find('a'):
-            print 'path: '
-            print i
-            print '\n\n\n\n\n\n'
+        path = i.find('a').get('href')
+        
+        label = i.get_text().strip()
+        try:
+            thumb = i.find('img')['src']
+            thumb =  thumb.replace('_s', '_l')
+            thumb = thumb.replace('_m', '_l')
 
-get_search('cheese')
+        except AttributeError:
+            continue
+    
+        item = {
+            'label': label,
+            'path': path,
+            'thumbnail': thumb,
+        }
+
+        output.append(item)
+
+    return output
+#iget_search(1,'cheese sticks')
+
+
+def get_recipe(url):
+    html = requests.get(url)
+    soup = bs(html.text, 'html.parser')
+
+    heading = soup.find('div', {'class': 'heading'})
+
+    print heading
+
+#get_recipe('http://www.taste.com.au/recipes/34861/fish+with+mandarin+and+dill+sauce')
