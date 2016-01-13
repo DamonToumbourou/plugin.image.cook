@@ -50,11 +50,77 @@ def get_search(page_num, keyword):
 
 
 def get_recipe(url):
-    html = requests.get(url)
-    soup = bs(html.text, 'html.parser')
+    html = urllib2.urlopen(url).read()
+    html = html.replace("</scr' + 'ipt>","")
+    soup = bs(html, 'html.parser')
 
-    heading = soup.find('div', {'class': 'heading'})
+    title = soup.find('div', {'class': 'heading'})
+    title = title.get_text().strip() 
+    
+    sub_title = soup.find('p', {'class': 'quote-left'})
+    sub_title = sub_title.get_text()
 
-    print heading
+    prep_time = soup.find('td', {'class': 'prepTime'})
+    prep_time = prep_time.find('em').get_text()
 
-#get_recipe('http://www.taste.com.au/recipes/34861/fish+with+mandarin+and+dill+sauce')
+    cook_time = soup.find('td', {'class': 'cookTime'})
+    cook_time = cook_time.find('em').get_text()
+
+    ing = soup.find('td', {'class': 'ingredientCount'})
+    ing = ing.find('em').get_text()
+    
+    diff = soup.find('td', {'class': 'difficultyTitle'})
+    diff = diff.find('em').get_text()
+    
+    try:
+        serv = soup.find('td', {'class': 'servings'})
+        serv = serv.find('em').get_text()
+        print serv
+    except AttributeError:
+        pass
+
+    if not serv:
+        serv = soup.find('td', {'class': 'makes'})
+        serv = serv.find('em').get_text()
+        print serv
+
+    print serv
+
+    img = soup.find('img', {'itemprop': 'photo'})
+    img = img.get('src')
+    
+    output = []
+    items = {
+            'title': title,
+            'sub_title': sub_title,
+            'prep_time': prep_time,
+            'cook_time': cook_time,
+            'ing': ing,
+            'diff': diff,
+            'serv': serv,
+            'img': img,
+    }
+
+    output.append(items)
+    
+    return output
+#get_recipe('http://www.taste.com.au/recipes/29331/hazelnut+milk+chocolates')
+
+
+def get_recipe_method(url):
+    html = urllib2.urlopen(url).read()
+    html = html.replace("</scr' + 'ipt>","")
+    soup = bs(html, 'html.parser')
+    step = soup.find_all('p', {'class': 'description'})
+
+    output = []
+    for i in step:
+        step = i.get_text()
+        items = {
+            'step': step,
+        }
+
+        output.append(items)
+
+    return output
+#get_recipe_method('http://www.taste.com.au/recipes/19197/warm+milk+with+a+twist')

@@ -55,23 +55,41 @@ def get_recipe(url):
     title = 'Fish with dill and mandarin sauce'
     sub_title = 'This Asian-inspired fish dish is dressed in a sweet mandarin and dill marinade.'
     prep_time = '0:10'
+    cook_time = ''
+    ing = ''
+    diff = ''
+    serv = ''
 
-    method_steps = [
-            {
-                'step': 'mix the ingredients in the bowl.',
-            },
-            {
-                'step': 'put it in the oven.',
-            }
-    ]
-    
     label = 'Food Picture:'
-    image = 'http://www.taste.com.au/images/recipes/col/2014/01/34998_l.jpg'
+
+    item = cook.get_recipe(url)
+
+    for i in item:
+        title = i['title']
+        sub_title = i['sub_title']
+        
+        if not sub_title:
+            sub_title = i['title']
+        
+        prep_time = i['prep_time']
+        cook_time = i['cook_time']
+        ing = i['ing']
+        diff = i['diff']
+        serv = i['serv']
+        image= i['img']
+
+    method_steps = []
+    method = cook.get_recipe_method(url)
+    for i in method:
+        method_steps.append({
+            'step': i['step'],
+    
+    })
 
     window = Cook(title)
-    window.set_info(sub_title)
-    window.set_recipe_info(prep_time)
-    window.set_image(label, image)
+    window.set_sub_title(sub_title)
+    window.set_recipe_info(prep_time, cook_time, ing, diff, serv)
+    #window.set_image(label, image)
     window.set_method(METHOD_NAME, method_steps)
     window.doModal()
     del window
@@ -85,30 +103,43 @@ class Cook(pyxbmct.AddonDialogWindow):
         # connenct a key action (Backspace) to close window.
         self.connect(pyxbmct.ACTION_NAV_BACK, self.close)
 
-    def set_info(self, sub_title):
+    def set_sub_title(self, sub_title):
         # recipe sub title
-        self.sub_title = sub_title
-        sub_title = pyxbmct.Label(sub_title)
-        self.placeControl(sub_title, 0, 0, 9, 5)
-    
-    def set_recipe_info(self, prep_time):
-        self.label = pyxbmct.Label('Prep Time: ' + prep_time)
-        self.placeControl(self.label, 1, 0)
+        self.textbox = pyxbmct.TextBox()
+        self.placeControl(self.textbox, 0, 0, 2, 4)
+        self.textbox.setText(sub_title)
 
+    def set_recipe_info(self, prep_time, cook_time, ing, diff, serv):
+        self.label = pyxbmct.Label('Prep Time: \n' + prep_time)
+        self.placeControl(self.label, 1, 0)
+        #
+        self.label = pyxbmct.Label('Cook Time: \n' + cook_time)
+        self.placeControl(self.label, 1, 0.6)
+        #
+        self.label = pyxbmct.Label('Ingredients: \n' + ing)
+        self.placeControl(self.label, 1, 1.2)   
+        #
+        self.label = pyxbmct.Label('Difficulty: \n' + diff)
+        self.placeControl(self.label, 1, 1.8)
+        #
+        self.label = pyxbmct.Label('Serves: \n' + serv)
+        self.placeControl(self.label, 1, 2.4)
+    
     def set_method(self, METHOD_NAME, method_steps):
         # display the recipe method - name
         list_label = pyxbmct.Label(METHOD_NAME)
         self.placeControl(list_label, 2.5, 2)
         # add steps to the list
         self.list = pyxbmct.List()
-        self.placeControl(self.list, 3, 1.85, 2, 2)
+        self.placeControl(self.list, 3, 0, 4, 4)
         
         step_num = 1
         for i in method_steps:
             items = ['Step {0}: '.format(step_num) + i['step'] ]
-            step_num = step_num + 1
+            step_num = step_num + 1 
             self.list.addItems(items)
-
+    
+    """
     def set_image(self, label, img):
         # image label
         self.img = img
@@ -117,6 +148,6 @@ class Cook(pyxbmct.AddonDialogWindow):
         #image
         self.image = pyxbmct.Image(self.img)
         self.placeControl(self.image, 6, 1, 3, 2)
-
+    """
 if __name__ == '__main__':
     plugin.run()
