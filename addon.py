@@ -52,15 +52,6 @@ def search(page_num, search_keyword=""):
 @plugin.route('/recipe/<url>/')
 def get_recipe(url):
     METHOD_NAME = 'Method'
-    title = 'Fish with dill and mandarin sauce'
-    sub_title = 'This Asian-inspired fish dish is dressed in a sweet mandarin and dill marinade.'
-    prep_time = '0:10'
-    cook_time = ''
-    ing = ''
-    diff = ''
-    serv = ''
-
-    label = 'Food Picture:'
 
     item = cook.get_recipe(url)
 
@@ -86,7 +77,7 @@ def get_recipe(url):
     
     })
 
-    window = Cook(title)
+    window = RecipeWindow(title)
     window.set_sub_title(sub_title)
     window.set_recipe_info(prep_time, cook_time, ing, diff, serv)
     #window.set_image(label, image)
@@ -95,10 +86,10 @@ def get_recipe(url):
     del window
 
 
-class Cook(pyxbmct.AddonDialogWindow):
+class RecipeWindow(pyxbmct.AddonDialogWindow):
 
     def __init__(self, title=''):
-        super(Cook, self).__init__(title)
+        super(RecipeWindow, self).__init__(title)
         self.setGeometry(1050, 650, 9, 4)
         # connenct a key action (Backspace) to close window.
         self.connect(pyxbmct.ACTION_NAV_BACK, self.close)
@@ -126,19 +117,50 @@ class Cook(pyxbmct.AddonDialogWindow):
         self.placeControl(self.label, 1, 2.4)
     
     def set_method(self, METHOD_NAME, method_steps):
-        # display the recipe method - name
+        # List
+        self.list = pyxbmct.List()
+        self.placeControl(self.list, 3, 3, 3, 1)
+        # Add items to the list
+        for i in method_steps:
+            items = ['Step: ' + i['step'] ]
+            self.list.addItems(items)
+            # Connect the list to a function to display which list is selected
+            self.connect(self.list, lambda: xbmc.executebuiltin('Notification(Note!,{0} selected.)'.format(
+                self.list.getListItem(self.list.getSelectedPosition()).getLabel())))
+            # Connect key and mouse events for the list navaigation feedback
+            self.connectEventList(
+                    [pyxbmct.ACTION_MOVE_DOWN,
+                     pyxbmct.ACTION_MOVE_UP,
+                     pyxbmct.ACTION_MOUSE_WHEEL_DOWN,
+                     pyxbmct.ACTION_MOUSE_WHEEL_UP],
+                     self.list_update)
+
+    def list_update(self):
+        try:
+            if self.getFocus() == self.list:
+                self.list_item_label.setLabel(self.list.getListItem(self.list.getSelectedPosition().getLabel())
+            else:
+                self.list_item_label.setLabel`
+
+    """
+    def set_method(self, METHOD_NAME, method_steps):
         list_label = pyxbmct.Label(METHOD_NAME)
-        self.placeControl(list_label, 2.5, 2)
+        self.placeControl(list_label, 2.5, 2, 4, 4)
         # add steps to the list
         self.list = pyxbmct.List()
-        self.placeControl(self.list, 3, 0, 4, 4)
+        self.placeControl(self.list, 3, 0, 2, 2)
         
+        vert_place = 3
         step_num = 1
         for i in method_steps:
-            items = ['Step {0}: '.format(step_num) + i['step'] ]
-            step_num = step_num + 1 
-            self.list.addItems(items)
-    
+            #items = ['Step {0}: '.format(step_num) + i['step'] ]
+            #step_num = step_num + 1 
+            #self.list.addItems(items)
+            self.textbox = pyxbmct.TextBox()
+            self.placeControl(self.textbox, vert_place, 0, 2, 4)
+            self.textbox.setText('Step {0}: '.format(step_num) + i['step'])
+            vert_place = vert_place + 2
+            step_num = step_num + 1
     """
     def set_image(self, label, img):
         # image label
@@ -148,6 +170,6 @@ class Cook(pyxbmct.AddonDialogWindow):
         #image
         self.image = pyxbmct.Image(self.img)
         self.placeControl(self.image, 6, 1, 3, 2)
-    """
+
 if __name__ == '__main__':
     plugin.run()
