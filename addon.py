@@ -4,6 +4,7 @@ import pyxbmct.addonwindow as pyxbmct
 
 plugin = Plugin()
 
+SITE_URL = 'http://www.taste.com.au/' 
 
 @plugin.route('/')
 def main_menu():
@@ -12,6 +13,10 @@ def main_menu():
         {
             'label': plugin.get_string(30000),
             'path': plugin.url_for('search_first_page', page_num=1),
+        },
+        {
+            'label': plugin.get_string(30001),
+            'path': plugin.url_for('highest_rated'),
         }
     ]
 
@@ -96,6 +101,22 @@ def get_recipe(url):
     window.set_method(METHOD_NAME, method_steps)
     window.doModal()
     del window
+
+
+@plugin.route('/highest_rated/')
+def highest_rated():
+    
+    item = []
+    result = cook.get_high_rated('http://www.taste.com.au')
+    print 'ASDASDASDCUNT'
+    print result
+    for i in result:
+        item.append({
+            'label': i['label'],
+            'path': plugin.url_for('get_recipe', url=i['path']),
+        })
+    
+    return item
 
 
 class RecipeWindow(pyxbmct.AddonDialogWindow):

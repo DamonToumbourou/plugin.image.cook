@@ -24,8 +24,6 @@ def get_search(page_num, keyword):
         path = i.find('a').get('href')
         
         label = i.get_text().strip()
-        print 'label: '
-        print label
         try:
             thumb = i.find('img')['src']
             thumb =  thumb.replace('_s', '_l')
@@ -41,7 +39,7 @@ def get_search(page_num, keyword):
         }
 
         output.append(item)
-
+    print output
     return output
 #get_search(1,'mint')
 
@@ -104,10 +102,13 @@ def get_recipe(url):
     if not serv:
         serv = soup.find('td', {'class': 'makes'})
         serv = serv.find('em').get_text()
-
-    img = soup.find('img', {'itemprop': 'photo'})
-    img = img.get('src')
     
+    try:
+        img = soup.find('img', {'itemprop': 'photo'})
+        img = img.get('src')
+    except AttributeError:
+        img = ''        
+
     output = []
     items = {
             'title': title,
@@ -125,7 +126,7 @@ def get_recipe(url):
     output.append(items)
     
     return output
-get_recipe('http://www.taste.com.au/recipes/29331/hazelnut+milk+chocolates')
+#get_recipe('http://www.taste.com.au/recipes/29331/hazelnut+milk+chocolates')
 
 def get_recipe_method(url):
     soup = get_soup(url)
@@ -160,3 +161,35 @@ def get_recipe_ingred(url):
 
     return ing_list
 #get_recipe_ingred('http://www.taste.com.au/recipes/3213/chocolate+mint+cakes+with+choc+mint+frosting')
+
+def get_high_rated(url):
+    soup = get_soup(url)
+    content = soup.find_all('div', {'class': 'module recommend-row'})
+    
+    output = []
+    
+    for i in content:
+        highest = i.find('h4').get_text()
+        
+        if "Highly rated" in highest:
+            labels = i.find_all('li')
+           
+            for k in labels:
+                label = k.get_text()
+
+                path = k.find('a')['href']
+
+                item = {
+                        'path': path,
+                        'label': label
+                }
+                output.append(item)
+    
+    item = {
+            'label': 'damon',
+            'path': 'frank',
+    }
+    print output
+    return output
+
+get_high_rated('http://www.taste.com.au/')

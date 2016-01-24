@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <strings>
-  <!-- Internet Archive -->
+  <!-- Cooking with Kodi -->
   <string id="30000">Search Recipes</string>
+  <string id="30001">Highest Rated Recipes</string>
+  <string id="30002">Most Searched For Recipes</string>
 </strings>
