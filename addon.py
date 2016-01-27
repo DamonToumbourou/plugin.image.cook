@@ -6,6 +6,7 @@ plugin = Plugin()
 
 SITE_URL = 'http://www.taste.com.au/' 
 
+
 @plugin.route('/')
 def main_menu():
     """ main menu """
@@ -29,11 +30,11 @@ def search(page_num, search_keyword=""):
     """ search the recipe collection """
     if not search_keyword:
         search_keyword = plugin.keyboard(default=None, heading='Search Recipes', hidden=False)
-   
-    result = cook.get_search(page_num, search_keyword)
+    
+    url = 'http://www.taste.com.au/search-recipes/?q=' + search_keyword + '&page=' +str(page_num)
+    result = cook.get_search(page_num, search_keyword, url)
     
     next_page = 1
-    #if not page_num:
     next_page = int(page_num) + 1
 
     item = []
@@ -106,10 +107,10 @@ def get_recipe(url):
 @plugin.route('/highest_rated/')
 def highest_rated():
     
-    item = []
-    result = cook.get_high_rated('http://www.taste.com.au')
-    print 'ASDASDASDCUNT'
+    result = cook.get_recipe_collection('http://www.taste.com.au')
+    print 'here!!!!!!!'
     print result
+    item = []
     for i in result:
         item.append({
             'label': i['label'],

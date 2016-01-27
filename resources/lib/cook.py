@@ -3,6 +3,7 @@ import urllib2
 import requests 
 import re
 
+
 def get_soup(url):
     html = urllib2.urlopen(url).read()
     html = html.replace("</scr' + 'ipt>","")
@@ -10,11 +11,11 @@ def get_soup(url):
 
     return soup
 
-def get_search(page_num, keyword):
+
+def get_search(page_num, keyword, url):
     keyword = keyword.replace(' ', '+')
-    SEARCH_URL = 'http://www.taste.com.au/search-recipes/?q=' + keyword + '&page=' + str(page_num) 
     
-    soup = get_soup(SEARCH_URL)
+    soup = get_soup(url)
    
     content = soup.find('div', {'class': 'content-item tab-content current'})
     content = content.find_all('div', {'class': 'story-block '})
@@ -39,9 +40,10 @@ def get_search(page_num, keyword):
         }
 
         output.append(item)
-    print output
+    
     return output
 #get_search(1,'mint')
+
 
 def get_recipe(url):
     ing = ''
@@ -126,7 +128,7 @@ def get_recipe(url):
     output.append(items)
     
     return output
-#get_recipe('http://www.taste.com.au/recipes/29331/hazelnut+milk+chocolates')
+
 
 def get_recipe_method(url):
     soup = get_soup(url)
@@ -143,7 +145,7 @@ def get_recipe_method(url):
         output.append(items)
 
     return output
-#get_recipe_method('http://www.taste.com.au/recipes/19197/warm+milk+with+a+twist')
+
 
 def get_recipe_ingred(url):
     soup = get_soup(url)
@@ -160,36 +162,3 @@ def get_recipe_ingred(url):
             ing_list.append(item)
 
     return ing_list
-#get_recipe_ingred('http://www.taste.com.au/recipes/3213/chocolate+mint+cakes+with+choc+mint+frosting')
-
-def get_high_rated(url):
-    soup = get_soup(url)
-    content = soup.find_all('div', {'class': 'module recommend-row'})
-    
-    output = []
-    
-    for i in content:
-        highest = i.find('h4').get_text()
-        
-        if "Highly rated" in highest:
-            labels = i.find_all('li')
-           
-            for k in labels:
-                label = k.get_text()
-
-                path = k.find('a')['href']
-
-                item = {
-                        'path': path,
-                        'label': label
-                }
-                output.append(item)
-    
-    item = {
-            'label': 'damon',
-            'path': 'frank',
-    }
-    print output
-    return output
-
-get_high_rated('http://www.taste.com.au/')
