@@ -14,26 +14,35 @@ def main_menu():
         {
             'label': plugin.get_string(30000),
             'path': plugin.url_for('search_first_page', page_num=1),
+            'thumbnail': 'https://our.umbraco.org/media/wiki/113820/635312684468394660_Searchpng.png',
+            'properties': {'fanart_image': 'http://media4.popsugar-assets.com/files/2013/07/22/987/n/28443503/b0de91cc2eb79060_shutterstock_130928207.xxxlarge/i/Prep-Produce-Advance.jpg'}
         },
         {
             'label': plugin.get_string(30001),
             'path': plugin.url_for('recipe_collection', keyword='Highly rated'),
+            'thumbnail': 'http://www.medicarehelp.org/wp-content/uploads/2013/11/rating.jpg',
+            'properties': {'fanart_image': 'http://myfrenchcookingtour.com/wp-content/uploads/2014/05/cooking-time.jpg'}
         },
         {
             'label': plugin.get_string(30002),
             'path': plugin.url_for('recipe_collection', keyword='Just added'),
+            'thumbnail': 'http://www.mogulmusic.com/images/just_added.gif',
+            'properties': {'fanart_image': 'http://www.cooksmarts.com/wp-content/uploads/2015/09/Landing-Page-Cooking-Guides-Jess-Kitchen-Chopping-1060x650.jpg'}
         },
         {
+            
             'label': plugin.get_string(30003),
             'path': plugin.url_for('recipe_collection', keyword='Most searched for'),
+            'thumbnail': 'https://our.umbraco.org/media/wiki/113820/635312684468394660_Searchpng.png',
+            'properties': {'fanart_image': 'https://lh3.googleusercontent.com/45vm1IkVheRAvy7ujXee2qYPovXOCLkXRbMqELXIcv7XmAVfnmU31NbT4i-sRvUk3X1c=h900'}
         },
         {
-
             'label': plugin.get_string(30004),
             'path': plugin.url_for('recipe_collection', keyword='Random recipe'),
+            'thumbnail': 'http://cdn.macheesmo.com/wp-content/themes/macheesmo2014/assets/images/random-recipe.png',
+            'properties': {'fanart_image': 'http://www.colonelsretreat.com/home/system/special_slider/cooking.png'}
         }
     ]
-
 
     return item
 
@@ -58,6 +67,7 @@ def search(page_num, search_keyword=""):
             'label': i['label'],
             'path': plugin.url_for('get_recipe', url=i['path']),
             'thumbnail': i['thumbnail'],
+            'properties': {'fanart_image': i['thumbnail'] }
         })
 
     item.append({
@@ -198,7 +208,7 @@ class RecipeWindow(pyxbmct.AddonDialogWindow):
         self.placeControl(list_label, 4, 1.65)
         #
         self.list_item_label = pyxbmct.TextBox()
-        self.placeControl(self.list_item_label, 4.5, 1.9, 4, 2)
+        self.placeControl(self.list_item_label, 4.5, 1.95, 4, 2)
         # List
         self.list = pyxbmct.List()
         self.placeControl(self.list, 4.5, 1.4, 5, 0.6)

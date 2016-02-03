@@ -1,6 +1,6 @@
-Cook Book Add-on for Kodi
--------------------------------------------
-A quality recipe archive
+Cooking with Kodi Add-on for Kodi
+-------------------------------------
+A huge collection of recipes with detailed cooking instructions. 
 
 Setup/Installation: The plugin should be installed through the official Kodi addon repository.
 
