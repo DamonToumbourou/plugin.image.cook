@@ -12,9 +12,7 @@ def get_soup(url):
     return soup
 
 
-def get_search(page_num, keyword, url):
-    keyword = keyword.replace(' ', '+')
-    
+def get_search(url):
     soup = get_soup(url)
    
     content = soup.find('div', {'class': 'content-item tab-content current'})
@@ -42,7 +40,6 @@ def get_search(page_num, keyword, url):
         output.append(item)
     
     return output
-#get_search(1,'mint')
 
 
 def get_recipe(url):
@@ -162,3 +159,31 @@ def get_recipe_ingred(url):
             ing_list.append(item)
 
     return ing_list
+
+
+def get_highest_rated(url, keyword):
+    soup = get_soup(url)
+
+    content = soup.find('div', {'id': 'taste-features'})
+    content = content.find_all('div', {'class': 'module recommend-row'})
+
+    output = []
+    
+    for i in content:
+        word = i.find('h4').get_text()
+        
+        if keyword in word:
+            recipe = i.find_all('li')
+            
+            for k in recipe:
+                label = k.get_text()
+        
+                path = k.find('a').get('href')
+
+                item = {
+                    'label': label,
+                    'path': path
+                }
+                output.append(item)
+
+    return output

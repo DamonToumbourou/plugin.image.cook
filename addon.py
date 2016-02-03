@@ -17,9 +17,23 @@ def main_menu():
         },
         {
             'label': plugin.get_string(30001),
-            'path': plugin.url_for('highest_rated'),
+            'path': plugin.url_for('recipe_collection', keyword='Highly rated'),
+        },
+        {
+            'label': plugin.get_string(30002),
+            'path': plugin.url_for('recipe_collection', keyword='Just added'),
+        },
+        {
+            'label': plugin.get_string(30003),
+            'path': plugin.url_for('recipe_collection', keyword='Most searched for'),
+        },
+        {
+
+            'label': plugin.get_string(30004),
+            'path': plugin.url_for('recipe_collection', keyword='Random recipe'),
         }
     ]
+
 
     return item
 
@@ -30,9 +44,10 @@ def search(page_num, search_keyword=""):
     """ search the recipe collection """
     if not search_keyword:
         search_keyword = plugin.keyboard(default=None, heading='Search Recipes', hidden=False)
-    
-    url = 'http://www.taste.com.au/search-recipes/?q=' + search_keyword + '&page=' +str(page_num)
-    result = cook.get_search(page_num, search_keyword, url)
+        search_keyword = search_keyword.replace(' ', '+')
+
+    url = 'http://www.taste.com.au/search-recipes/?q=' + search_keyword + '&page=' + str(page_num)
+    result = cook.get_search(url)
     
     next_page = 1
     next_page = int(page_num) + 1
@@ -55,7 +70,7 @@ def search(page_num, search_keyword=""):
 
 @plugin.route('/recipe/<url>/')
 def get_recipe(url):
-    METHOD_NAME = 'METHOD:'
+    METHOD_NAME = 'METHOD: '
     INGRED_NAME = 'INGREDIENTS: '
 
     item = cook.get_recipe(url)
@@ -104,17 +119,17 @@ def get_recipe(url):
     del window
 
 
-@plugin.route('/highest_rated/')
-def highest_rated():
+@plugin.route('/recipe_collection/<keyword>')
+def recipe_collection(keyword):
     
-    result = cook.get_recipe_collection('http://www.taste.com.au')
+    result = cook.get_highest_rated('http://www.taste.com.au/menus/', keyword)
     print 'here!!!!!!!'
     print result
     item = []
     for i in result:
         item.append({
             'label': i['label'],
-            'path': plugin.url_for('get_recipe', url=i['path']),
+            'path': plugin.url_for('get_recipe', url=i['path'])
         })
     
     return item
@@ -186,7 +201,7 @@ class RecipeWindow(pyxbmct.AddonDialogWindow):
         self.placeControl(self.list_item_label, 4.5, 1.9, 4, 2)
         # List
         self.list = pyxbmct.List()
-        self.placeControl(self.list, 4.5, 1.5, 5, 0.3)
+        self.placeControl(self.list, 4.5, 1.4, 5, 0.6)
         # Add items to the list
         step_num = 1
         for i in method_steps:
